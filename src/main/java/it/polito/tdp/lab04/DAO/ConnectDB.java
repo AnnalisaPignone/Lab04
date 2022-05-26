@@ -7,7 +7,9 @@ import java.sql.SQLException;
 public class ConnectDB {
 	
 	// check user e password
-	static private final String jdbcUrl = "jdbc:mysql://localhost/iscritticorsi?user=root&password=root";
+	static private final String jdbcUrl = "jdbc:mysql://localhost/iscritticorsi?user=root&password=silvana";
+	
+	//jdbc:mysql://localhost/iscritticorsi?user=root&password=silvana
 
 	public static Connection getConnection() {
 
@@ -18,6 +20,7 @@ public class ConnectDB {
 		} catch (SQLException e) {
 
 			e.printStackTrace();
+			System.out.println("ERRORE CONNECTION");
 			throw new RuntimeException("Cannot get a connection " + jdbcUrl, e);
 		}
 	}

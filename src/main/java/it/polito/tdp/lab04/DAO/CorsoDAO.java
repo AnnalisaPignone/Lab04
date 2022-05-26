@@ -17,14 +17,15 @@ public class CorsoDAO {
 	 */
 	public List<Corso> getTuttiICorsi() {
 
-		final String sql = "SELECT * FROM corso";
+		final String sql = "SELECT * "
+				+ "FROM corso";
 
 		List<Corso> corsi = new LinkedList<Corso>();
 
 		try {
 			Connection conn = ConnectDB.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
-
+			
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
@@ -34,10 +35,12 @@ public class CorsoDAO {
 				String nome = rs.getString("nome");
 				int periodoDidattico = rs.getInt("pd");
 
-				System.out.println(codins + " " + numeroCrediti + " " + nome + " " + periodoDidattico);
+				//System.out.println(codins + " " + numeroCrediti + " " + nome + " " + periodoDidattico);
 
 				// Crea un nuovo JAVA Bean Corso
 				// Aggiungi il nuovo oggetto Corso alla lista corsi
+				
+				corsi.add(new Corso(codins, numeroCrediti, nome, periodoDidattico)); 
 			}
 
 			conn.close();
@@ -74,5 +77,41 @@ public class CorsoDAO {
 		// ritorna true se l'iscrizione e' avvenuta con successo
 		return false;
 	}
+	
+	public List<Corso> getCorsiByMatricola(Studente s){
+		
+		final String sql = "SELECT c.codins, c.crediti, c.nome, c.pd "
+				+ "FROM corso c, iscrizione i "
+				+ "WHERE c.codins=i.codins AND i.matricola=?"; 
 
+		List<Corso> corsi = new LinkedList<Corso>();
+
+		try {
+			Connection conn = ConnectDB.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1,s.getMatricola());
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				String codins = rs.getString("codins");
+				int numeroCrediti = rs.getInt("crediti");
+				String nome = rs.getString("nome");
+				int periodoDidattico = rs.getInt("pd");
+				
+				corsi.add(new Corso(codins, numeroCrediti, nome, periodoDidattico)); 
+			}
+
+			conn.close();
+			
+			return corsi;
+			
+
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			throw new RuntimeException("Errore Db", e);
+		}
+	}
+		
 }
+
